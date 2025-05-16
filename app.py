@@ -3,10 +3,10 @@
 
 # ## Streamlit + GitHub
 
-# In[4]:
+# ### Import Libraries
 
+# In[ ]:
 
-# Step 1: Import Libraries
 
 import streamlit as st
 import pandas as pd
@@ -14,17 +14,31 @@ import plotly.express as px
 import matplotlib as plt
 
 
-# Step 2: Load Data
+# ### Load Data
+
+# In[ ]:
+
+
 ratings = pd.read_csv("rating.csv", encoding="ISO-8859-1")
 movies = pd.read_csv("movies.csv", encoding="ISO-8859-1")
 
-# Step 3: Preprocess
+
+# ### Preprocess
+
+# In[9]:
+
+
 ratings["year"] = pd.to_datetime(ratings["timestamp"], unit="s").dt.year
 movies["genres_list"] = movies["genres"].str.split("|")
 df = pd.merge(ratings, movies, on="movieId", how="left")
 
-# Step 4: Sidebar Filters
-st.sidebar.title("🎬 Movie Explorer (Ages 18–35)")
+
+# ### Sidebar Filters
+
+# In[14]:
+
+
+st.sidebar.title("Movie Explorer (Ages 18–35)")
 st.sidebar.markdown("Filter by genre to explore rating trends")
 
 all_genres = sorted({genre for sublist in movies["genres_list"] for genre in sublist})
@@ -32,11 +46,21 @@ selected_genres = st.sidebar.multiselect("Select genres:", all_genres, default=[
 
 df_filtered = df[df["genres_list"].apply(lambda x: any(g in x for g in selected_genres))]
 
-# Step 5: Page Title
-st.title("📊 Interactive Movie Ratings Dashboard")
+
+# ### Page Title
+
+# In[17]:
+
+
+st.title(" Interactive Movie Ratings Dashboard")
 st.markdown("**Audience:** Ages 18–35  \n*Purpose:* Discover genre trends, popularity, and ratings")
 
-# Step 6: Plot 1 – Most Rated Genres
+
+# ### Plot 1 – Most Rated Genres
+
+# In[ ]:
+
+
 genre_counts = (
     df.explode("genres_list")
     .groupby("genres_list")
@@ -53,7 +77,12 @@ fig1 = px.bar(
 )
 st.plotly_chart(fig1, use_container_width=True)
 
-# Step 7: Plot 2 – Ratings Distribution
+
+# ### Plot 2 – Ratings Distribution
+
+# In[21]:
+
+
 fig2 = px.histogram(
     df_filtered, x="rating", nbins=20,
     title="Ratings Distribution for Selected Genres",
@@ -80,15 +109,26 @@ fig3 = px.bar(
 )
 st.plotly_chart(fig3, use_container_width=True)
 
-# Step 9: Insights
+
+# ### Insights
+
+# In[ ]:
+
+
 st.markdown("---")
-st.markdown("### 🤖 Why This Dataset Fits Machine Learning")
+st.markdown("### Why This Dataset Fits Machine Learning")
 st.markdown("""
 - **Genre Preferences:** Consistent patterns across genre and rating trends  
 - **User Behavior:** Millions of data points help build recommender systems  
 - **Scalability:** Well-structured for collaborative filtering or clustering  
 - **Business Use:** E-commerce/movie platforms can personalize content
 """)
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
